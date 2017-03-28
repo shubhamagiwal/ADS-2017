@@ -22,15 +22,15 @@ public class FourWayCacheHeap {
     
     public int parent(int i) 
     {
-    	System.out.println((int)Math.round((i-2)/4.0+2));
+    	//System.out.println((int)Math.round((i-2)/4.0+2));
         return (int)Math.round((i-2)/4.0+2);
     }
  
     /** Function to get index of k th child of i **/
     public int kthChild(int i, int k) 
     {
-    	System.out.println(Math.round(4 * (i-1) + (k-1)));
-        return (4 * (i-1) + (k-1));
+    	//System.out.println(Math.round(4 * (i-1) + (k-1)));
+        return (4 * (i-2) + (k-1));
     }
     
     public void insert(int x)
@@ -71,7 +71,8 @@ public class FourWayCacheHeap {
         {
             if (heapArr[pos] < heapArr[bestChild]) 
                 bestChild = pos;
-            pos = kthChild(index, k++);
+                k=k+1;
+            pos = kthChild(index, k);
         }    
         return bestChild;
     }
