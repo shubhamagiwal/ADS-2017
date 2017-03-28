@@ -1,4 +1,13 @@
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Vector;
+import java.util.*;
 
 public class HuffmanCodingBinaryHeap {
 	
@@ -125,8 +134,10 @@ public class HuffmanCodingBinaryHeap {
 	    void HuffmanCodes(int arr[]){
 	    	binaryHeapWithFreq bhwf=new binaryHeapWithFreq(arr.length); 
 	    	for(int i=0;i<arr.length;i++){
-	    		heapNodes hn=new heapNodes(i,arr[i]);
-	    		bhwf.insertKey(hn);
+	    		if(arr[i]!=0){
+	    			heapNodes hn=new heapNodes(i,arr[i]);
+		    		bhwf.insertKey(hn);
+	    		}	
 	    	}
 	    	
 	    	while(bhwf.heapSize!=1){
@@ -139,7 +150,7 @@ public class HuffmanCodingBinaryHeap {
 	    	}
 	    	
 	    	printCodes(bhwf.heapArr[0],"");
-	    	printHashMap();
+	    	//printHashMap();
 	    	
 	    }
 	    
@@ -164,17 +175,103 @@ public class HuffmanCodingBinaryHeap {
 	
 	void buildHuffmanTrees(int arr[]){
 		binaryHeapWithFreq bhwf=new binaryHeapWithFreq(arr.length);
-    	for(int i=0;i<arr.length;i++){
-    		bhwf.HuffmanCodes(arr);		
-    	}
+			long startTime = System.nanoTime();
+    		bhwf.HuffmanCodes(arr);	
+    		System.out.println("Done");
+    		long stopTime = System.nanoTime();
+    		System.out.println((stopTime - startTime)/ 1000000000.0);
+    		System.out.println("Done");
     }
+	
+	String encodedOutput(ArrayList fileContentarr){
+		
+		String encoded="";
+		System.out.println(fileContentarr.size());
+		for(int i=0;i<fileContentarr.size();i++){
+			encoded=encoded+(String)hmap.get(fileContentarr.get(i));
+		}
+		//System.out.println(encoded);
+		return encoded;
+	}
+	
+	void createEncodedFile(String encoded){
+		System.out.println("Enterd the file creation stage");
+		BitSet bitSet = new BitSet(encoded.length());
+		int bitcounter = 0;
+		for(Character c : encoded.toCharArray()) {
+		    if(c.equals('1')) {
+		        bitSet.set(bitcounter);
+		    }
+		    bitcounter++;
+		}
+		
+		for(int i=0;i<=bitSet.length();i++){
+			System.out.print(bitSet.get(i) ==false?0:1);
+		}
+		
+		byte encodedArr[]=bitSet.toByteArray();
+
+		try {
+			FileOutputStream fos = new FileOutputStream("encoded.bin");
+			BufferedOutputStream bos = null;
+			bos = new BufferedOutputStream(fos);
+			try {
+				bos.write(encodedArr);
+				bos.flush();
+				System.out.println("Done with flushing");
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally{
+				 try {
+					 if(bos!=null){
+						 bos.flush();
+						 bos.close(); 
+					 }
+					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				 
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	
+	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		HuffmanCodingBinaryHeap hcbh=new HuffmanCodingBinaryHeap();
-		int arr[] = {5, 4, 11, 10, 13, 45 };
-		hcbh.buildHuffmanTrees(arr);
-		
+		//int arr[] = {5, 4, 11, 10, 13, 45 };
+		int arr[]=new int[10000000];
+		ArrayList <Integer> fileContentarr=new ArrayList<Integer>();
+		int i=0;
+		Arrays.fill(arr, 0);	
+		if(args.length==0){
+			System.out.println("Please Enter the file Path");
+			System.exit(0);
+		}else{
+			String FILENAME=args[0];
+			String currentLine;
+			
+			try (BufferedReader br = new BufferedReader(new FileReader(FILENAME))) {
+				while ((currentLine = br.readLine()) != null) {
+					int value=Integer.parseInt(currentLine);
+					arr[value]=arr[value]+1;
+					fileContentarr.add(value);
+				}
+				hcbh.buildHuffmanTrees(arr);
+				String encodedInput=hcbh.encodedOutput(fileContentarr);
+				hcbh.createEncodedFile(encodedInput);
+				
+			}catch (IOException e) {
+					e.printStackTrace();
+		    }
+        }
 	}
-
 }
