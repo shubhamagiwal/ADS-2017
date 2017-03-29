@@ -1,12 +1,13 @@
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Vector;
 import java.util.*;
 
 public class HuffmanCodingBinaryHeap {
@@ -185,13 +186,13 @@ public class HuffmanCodingBinaryHeap {
 	
 	String encodedOutput(ArrayList fileContentarr){
 		
-		String encoded="";
+		StringBuilder encoded = new StringBuilder();
 		System.out.println(fileContentarr.size());
 		for(int i=0;i<fileContentarr.size();i++){
-			encoded=encoded+(String)hmap.get(fileContentarr.get(i));
+			encoded.append((String)hmap.get(fileContentarr.get(i)));
 		}
 		//System.out.println(encoded);
-		return encoded;
+		return encoded.toString();
 	}
 	
 	void createEncodedFile(String encoded){
@@ -204,10 +205,10 @@ public class HuffmanCodingBinaryHeap {
 		    }
 		    bitcounter++;
 		}
-		
-		for(int i=0;i<=bitSet.length();i++){
-			System.out.print(bitSet.get(i) ==false?0:1);
-		}
+//		
+//		for(int i=0;i<=bitSet.length();i++){
+//			System.out.print(bitSet.get(i) ==false?0:1);
+//		}
 		
 		byte encodedArr[]=bitSet.toByteArray();
 
@@ -243,6 +244,51 @@ public class HuffmanCodingBinaryHeap {
 		
 	
 	}
+	
+	public void createCodeTableFile(String FILENAME){
+		FileWriter fw=null;
+		BufferedWriter bw=null;
+		try {
+			fw = new FileWriter(FILENAME);
+			bw = new BufferedWriter(fw);
+			 Iterator it = hmap.entrySet().iterator();
+		        while (it.hasNext()) {
+		        	Map.Entry hmapValue = (Map.Entry)it.next();
+		        	System.out.println(Integer.toString((int)hmapValue.getKey())+" "+(String)hmapValue.getValue());
+		        	try {
+						bw.write(Integer.toString((int)hmapValue.getKey()) + " " + (String)hmapValue.getValue());
+						if(it.hasNext()){
+							bw.write("\n");
+						}
+						//bw.write(hmapValue.getKey()+" "+hmapValue.getValue()+"\n");
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					  }	
+					}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally{
+			if(bw!=null){
+				try {
+					bw.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if(fw!=null){
+			  try {
+				fw.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		  }
+		}      
+        System.out.println("Created Code Table : code_table.txt");
+	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -268,6 +314,7 @@ public class HuffmanCodingBinaryHeap {
 				hcbh.buildHuffmanTrees(arr);
 				String encodedInput=hcbh.encodedOutput(fileContentarr);
 				hcbh.createEncodedFile(encodedInput);
+				hcbh.createCodeTableFile("code_table.txt");
 				
 			}catch (IOException e) {
 					e.printStackTrace();

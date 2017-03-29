@@ -44,6 +44,7 @@ public class pairingHeapDataFreq {
 			//System.out.println("greater than the root1");
 			first.child=second;
  			second.leftSibling=first;
+			minPointer=first;
  			return first;
 		}else if(second.freq>=first.freq && first.child!=null){
 			// attach the second node as a child to the first node and change the child pointers
@@ -52,6 +53,7 @@ public class pairingHeapDataFreq {
 			second.rightSibling=first.child;
 			first.child.leftSibling=second;
 			first.child=second;
+			minPointer=first;
 			return first;
 		}else if(first.freq>second.data && second.child==null){
 			second.child=first;

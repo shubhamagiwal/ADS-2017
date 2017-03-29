@@ -40,6 +40,7 @@ public class pairingHeap {
 			System.out.println("greater than the root1");
 			first.child=second;
  			second.leftSibling=first;
+ 			minPointer=first;
  			return first;
 		}else if(second.data>=first.data && first.child!=null){
 			// attach the second node as a child to the first node and change the child pointers
@@ -48,6 +49,7 @@ public class pairingHeap {
 			second.rightSibling=first.child;
 			first.child.leftSibling=second;
 			first.child=second;
+			minPointer=first;
 			return first;
 		}else if(first.data>second.data && second.child==null){
 			System.out.println("lesser than the root");
@@ -149,8 +151,8 @@ public class pairingHeap {
 		ph.insert(10);
 		ph.insert(12);
 		ph.insert(9);
-		ph.insert(13);
-		ph.insert(13);
+		ph.insert(1);
+		ph.insert(0);
 		System.out.println(ph.removeMin());
 		System.out.println(ph.removeMin());
 		System.out.println(ph.removeMin());
