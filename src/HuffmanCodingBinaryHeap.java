@@ -306,7 +306,7 @@ public class HuffmanCodingBinaryHeap {
 			String currentLine;
 			
 			try (BufferedReader br = new BufferedReader(new FileReader(FILENAME))) {
-				while ((currentLine = br.readLine()) != null) {
+				while ((currentLine = br.readLine()) != null && !currentLine.equals("")) {
 					int value=Integer.parseInt(currentLine);
 					arr[value]=arr[value]+1;
 					fileContentarr.add(value);
