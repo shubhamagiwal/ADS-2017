@@ -217,11 +217,11 @@ public class HuffmanCodingWithPairingHeap {
     
     void buildHuffmanTrees(int arr[]){
     	pairingHeapDataFreq bhwf=new pairingHeapDataFreq();
-			long startTime = System.nanoTime();
+			//long startTime = System.nanoTime();
     		bhwf.HuffmanCodes(arr);	
     		System.out.println("Done");
-    		long stopTime = System.nanoTime();
-    		System.out.println((stopTime - startTime)/ 1000000000.0);
+    		//long stopTime = System.nanoTime();
+    		//System.out.println((stopTime - startTime)/ 1000000000.0);
     		System.out.println("Done");
     }
 	
@@ -347,10 +347,18 @@ public class HuffmanCodingWithPairingHeap {
 					arr[value]=arr[value]+1;
 					fileContentarr.add(value);
 				}
-				hcbh.buildHuffmanTrees(arr);
-				String encodedInput=hcbh.encodedOutput(fileContentarr);
-				hcbh.createEncodedFile(encodedInput);
-				hcbh.createCodeTableFile("code_table.txt");
+				long startTime = System.nanoTime();
+				for(i=0;i<10;i++){
+					HuffmanCodingWithPairingHeap hcbh1=new HuffmanCodingWithPairingHeap();
+					hcbh1.buildHuffmanTrees(arr);
+				}
+				long stopTime = System.nanoTime();
+				System.out.println((stopTime - startTime)/ 1000000000.0);
+				
+				//hcbh.buildHuffmanTrees(arr);
+				//String encodedInput=hcbh.encodedOutput(fileContentarr);
+				//hcbh.createEncodedFile(encodedInput);
+				//hcbh.createCodeTableFile("code_table.txt");
 				
 			}catch (IOException e) {
 					e.printStackTrace();
