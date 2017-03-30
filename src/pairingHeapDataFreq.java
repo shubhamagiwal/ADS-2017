@@ -1,4 +1,5 @@
 
+
 public class pairingHeapDataFreq {
 	
 	
@@ -127,16 +128,5 @@ public class pairingHeapDataFreq {
     		insert(i,arr[i]);
     	}
     }
-	
-	public static void main(String args[]){
-		pairingHeapDataFreq phdf=new pairingHeapDataFreq();
-		int arr[] = {5, 4, 11, 10, 13, 45 };
-		phdf.pushArray(arr);
-		System.out.println("freq"+" "+"data");
-		for(int i=0;i<arr.length;i++){
-			pairNode ph=phdf.removeMin();
-			System.out.println(ph.freq+" "+ph.data);
-		}
-	}
 
 }

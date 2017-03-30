@@ -6,28 +6,32 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.HashMap;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Map;
 
-public class HuffmanCodingBinaryHeap {
-	
+
+public class HuffmanCodingBinaryHeapNew {
+
+
 	HashMap<Integer, String> hmap = new HashMap<Integer, String>();
 	
-//	public class HuffmanNodes{
-//		int data;
-//		int freq;
-//		HuffmanNodes left;
-//		HuffmanNodes right;
-//		
-//		HuffmanNodes(int data,int freq){
-//			this.data=data;
-//			this.freq=freq;
-//			this.left=null;
-//			this.right=null;
-//		}
-//	}
-//	
+	public class HuffmanNodes{
+		int data;
+		int freq;
+		HuffmanNodes left;
+		HuffmanNodes right;
+		
+		HuffmanNodes(int data,int freq){
+			this.data=data;
+			this.freq=freq;
+			this.left=null;
+			this.right=null;
+		}
+	}
 	
 	public class binaryHeapWithFreq {
 		
@@ -38,15 +42,12 @@ public class HuffmanCodingBinaryHeap {
 	   public class heapNodes{
 	    	int data;
 	    	int freq;
-	    	//HuffmanNodes hnodes;
-	    	heapNodes left;
-	    	heapNodes right;
-	    	heapNodes(int data,int freq /*HuffmanNodes hnodes1*/){
-	    		this.data=data;
-	    		this.freq=freq;
-	    		//this.left=null;
-	    		//this.right=null;
-	    		
+	    	HuffmanNodes hnodes;
+	    	heapNodes(HuffmanNodes hnodes1){
+	    		this.data=hnodes1.data;
+	    		this.freq=hnodes1.freq;
+	    		this.hnodes=hnodes1;
+
 	    	}
 	    }
 
@@ -71,7 +72,7 @@ public class HuffmanCodingBinaryHeap {
 	    // to get index of right child of node at index i
 	    int right_child(int i) { return (2*i + 2); }
 	  
-	    void insertKey(heapNodes k)
+	    void insertKey(HuffmanNodes k)
 	    {
 	        if (this.heapSize == this.capacity)
 	        {
@@ -82,7 +83,8 @@ public class HuffmanCodingBinaryHeap {
 	        // First insert the new key at the end
 	        this.heapSize++;
 	        int i = this.heapSize - 1;
-	        this.heapArr[i] = k;
+	        heapNodes hn=new heapNodes(k);
+	        this.heapArr[i] = hn;
 	     
 	        // Fix the min heap property if it is violated
 	        while (i != 0 && this.heapArr[parent(i)].freq > this.heapArr[i].freq)
@@ -95,14 +97,14 @@ public class HuffmanCodingBinaryHeap {
 	         }
 	    }
 	 
-	    heapNodes extractMin()
+	    HuffmanNodes extractMin()
 	    {
 	        if (this.heapSize <= 0)
 	            return null;
 	        if (this.heapSize == 1)
 	        {
 	            this.heapSize--;
-	            return this.heapArr[0];
+	            return this.heapArr[0].hnodes;
 	        }
 	     
 	        // Store the minimum value, and remove it from heap
@@ -110,7 +112,7 @@ public class HuffmanCodingBinaryHeap {
 	        this.heapArr[0] = this.heapArr[this.heapSize-1];
 	        this.heapSize--;
 	        MinHeapify(0);
-	        return root;
+	        return root.hnodes;
 	    }
 	    
 	    void MinHeapify(int i)
@@ -131,10 +133,6 @@ public class HuffmanCodingBinaryHeap {
 	        }
 	    }
 	    
-	    heapNodes getMin(){
-	    	return this.heapArr[0];
-	    }
-	    
 	    void printMinHeap(){
 	    int value=0;
 	    System.out.println("Freq"+" "+"Data");
@@ -145,7 +143,7 @@ public class HuffmanCodingBinaryHeap {
 	    
 	    void pushArray(int arr[]){
 	    	for(int i=0;i<arr.length;i++){
-	    		insertKey(new heapNodes(i,arr[i]));
+	    		insertKey(new HuffmanNodes(i,arr[i]));
 	    	}
 	    }
 	    
@@ -153,29 +151,27 @@ public class HuffmanCodingBinaryHeap {
 	    	binaryHeapWithFreq bhwf=new binaryHeapWithFreq(arr.length); 
 	    	for(int i=0;i<arr.length;i++){
 	    		if(arr[i]!=0){
-	    			//HuffmanNodes hnodes2=new HuffmanNodes(i,arr[i]);
-	    			//heapNodes hn=new heapNodes(hnodes2);
-	    			heapNodes hn=new heapNodes(i,arr[i]);
-		    		bhwf.insertKey(hn);
+	    			HuffmanNodes hnodes2=new HuffmanNodes(i,arr[i]);
+		    		bhwf.insertKey(hnodes2);
 	    		}	
 	    	}
 	    	
 	    	while(bhwf.heapSize!=1){
-	    		heapNodes left=bhwf.extractMin();
-	    		heapNodes right=bhwf.extractMin();
+	    		HuffmanNodes left=bhwf.extractMin();
+	    		HuffmanNodes right=bhwf.extractMin();
 	    		//HuffmanNodes hnode2=new HuffmanNodes()
-	    		heapNodes top= new heapNodes(Integer.MIN_VALUE,left.freq+right.freq);
+	    		HuffmanNodes top= new HuffmanNodes(Integer.MIN_VALUE,left.freq+right.freq);
 	    		top.left=left;
 	    		top.right=right;
 	    		bhwf.insertKey(top);
 	    	}
 	    	
-	    	printCodes(bhwf.heapArr[0],"");
+	    	printCodes(bhwf.heapArr[0].hnodes,"");
 	    	//printHashMap();
 	    	
 	    }
 	    
-	    void printCodes(heapNodes root,String str){
+	    void printCodes(HuffmanNodes root,String str){
 	    	 if (root==null)
 	    	        return;
 	    	 
@@ -187,132 +183,136 @@ public class HuffmanCodingBinaryHeap {
 	    	 printCodes(root.right,str+"1"); 
 	    }
 	    
+	  }
+	
+	    
 	    void printHashMap(){
 	    	System.out.println(hmap);
 	    } 
 	    
-	   
-	}
-	
-	void buildHuffmanTrees(int arr[]){
-		binaryHeapWithFreq bhwf=new binaryHeapWithFreq(arr.length);
-			long startTime = System.nanoTime();
-    		bhwf.HuffmanCodes(arr);	
-    		System.out.println("Done");
-    		long stopTime = System.nanoTime();
-    		System.out.println((stopTime - startTime)/ 1000000000.0);
-    		System.out.println("Done");
-    }
-	
-	String encodedOutput(ArrayList fileContentarr){
-		
-		StringBuilder encoded = new StringBuilder();
-		System.out.println(fileContentarr.size());
-		for(int i=0;i<fileContentarr.size();i++){
-			encoded.append((String)hmap.get(fileContentarr.get(i)));
+	    void buildHuffmanTrees(int arr[]){
+			binaryHeapWithFreq bhwf=new binaryHeapWithFreq(arr.length);
+				long startTime = System.nanoTime();
+	    		bhwf.HuffmanCodes(arr);	
+	    		System.out.println("Done");
+	    		long stopTime = System.nanoTime();
+	    		System.out.println((stopTime - startTime)/ 1000000000.0);
+	    		System.out.println("Done");
+	    }
+	    
+	    
+	    String encodedOutput(ArrayList fileContentarr){
+			
+			StringBuilder encoded = new StringBuilder();
+			System.out.println(fileContentarr.size());
+			for(int i=0;i<fileContentarr.size();i++){
+				encoded.append((String)hmap.get(fileContentarr.get(i)));
+			}
+			//System.out.println(encoded);
+			return encoded.toString();
 		}
-		//System.out.println(encoded);
-		return encoded.toString();
-	}
-	
-	void createEncodedFile(String encoded){
-		System.out.println("Enterd the file creation stage");
-		BitSet bitSet = new BitSet(encoded.length());
-		int bitcounter = 0;
-		for(Character c : encoded.toCharArray()) {
-		    if(c.equals('1')) {
-		        bitSet.set(bitcounter);
-		    }
-		    bitcounter++;
-		}
-//		
-//		for(int i=0;i<=bitSet.length();i++){
-//			System.out.print(bitSet.get(i) ==false?0:1);
-//		}
 		
-		byte encodedArr[]=bitSet.toByteArray();
+		void createEncodedFile(String encoded){
+			System.out.println("Enterd the file creation stage");
+			BitSet bitSet = new BitSet(encoded.length());
+			int bitcounter = 0;
+			for(Character c : encoded.toCharArray()) {
+			    if(c.equals('1')) {
+			        bitSet.set(bitcounter);
+			    }
+			    bitcounter++;
+			}
+//			
+//			for(int i=0;i<=bitSet.length();i++){
+//				System.out.print(bitSet.get(i) ==false?0:1);
+//			}
+			
+			byte encodedArr[]=bitSet.toByteArray();
 
-		try {
-			FileOutputStream fos = new FileOutputStream("encoded.bin");
-			BufferedOutputStream bos = null;
-			bos = new BufferedOutputStream(fos);
 			try {
-				bos.write(encodedArr);
-				bos.flush();
-				System.out.println("Done with flushing");
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}finally{
-				 try {
-					 if(bos!=null){
-						 bos.flush();
-						 bos.close(); 
-					 }
+				FileOutputStream fos = new FileOutputStream("encoded.bin");
+				BufferedOutputStream bos = null;
+				bos = new BufferedOutputStream(fos);
+				try {
+					bos.write(encodedArr);
+					bos.flush();
+					System.out.println("Done with flushing");
 					
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
-				 
-			}
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	
-	}
-	
-	public void createCodeTableFile(String FILENAME){
-		FileWriter fw=null;
-		BufferedWriter bw=null;
-		try {
-			fw = new FileWriter(FILENAME);
-			bw = new BufferedWriter(fw);
-			 Iterator it = hmap.entrySet().iterator();
-		        while (it.hasNext()) {
-		        	Map.Entry hmapValue = (Map.Entry)it.next();
-		        	System.out.println(Integer.toString((int)hmapValue.getKey())+" "+(String)hmapValue.getValue());
-		        	try {
-						bw.write(Integer.toString((int)hmapValue.getKey()) + " " + (String)hmapValue.getValue());
-						if(it.hasNext()){
-							bw.write("\n");
-						}
-						//bw.write(hmapValue.getKey()+" "+hmapValue.getValue()+"\n");
+				}finally{
+					 try {
+						 if(bos!=null){
+							 bos.flush();
+							 bos.close(); 
+						 }
+						
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					  }	
 					}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally{
-			if(bw!=null){
-				try {
-					bw.close();
+					 
+				}
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		
+		}
+		
+		public void createCodeTableFile(String FILENAME){
+			FileWriter fw=null;
+			BufferedWriter bw=null;
+			try {
+				fw = new FileWriter(FILENAME);
+				bw = new BufferedWriter(fw);
+				 Iterator it = hmap.entrySet().iterator();
+			        while (it.hasNext()) {
+			        	Map.Entry hmapValue = (Map.Entry)it.next();
+			        	System.out.println(Integer.toString((int)hmapValue.getKey())+" "+(String)hmapValue.getValue());
+			        	try {
+							bw.write(Integer.toString((int)hmapValue.getKey()) + " " + (String)hmapValue.getValue());
+							if(it.hasNext()){
+								bw.write("\n");
+							}
+							//bw.write(hmapValue.getKey()+" "+hmapValue.getValue()+"\n");
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						  }	
+						}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally{
+				if(bw!=null){
+					try {
+						bw.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				if(fw!=null){
+				  try {
+					fw.close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			}
-			if(fw!=null){
-			  try {
-				fw.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		  }
-		}      
-        System.out.println("Created Code Table : code_table.txt");
-	}
-
+			  }
+			}      
+	        System.out.println("Created Code Table : code_table.txt");
+		}
+	
+	    
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		HuffmanCodingBinaryHeap hcbh=new HuffmanCodingBinaryHeap();
+		// TODO Auto-generated method stub
+		HuffmanCodingBinaryHeapNew hcbh=new HuffmanCodingBinaryHeapNew();
 		//int arr[] = {5, 4, 11, 10, 13, 45 };
 		int arr[]=new int[10000000];
 		ArrayList <Integer> fileContentarr=new ArrayList<Integer>();
