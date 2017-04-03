@@ -34,6 +34,7 @@ public class huffmanDecoder {
 	public String getEncodedString(String encoded_file_name){
 		System.out.println("Entered");
 		File file = new File(encoded_file_name);
+		System.out.println(file.length());
 		byte[] fileData = new byte[(int) file.length()];
 		FileInputStream in;
 		try {
@@ -52,9 +53,10 @@ public class huffmanDecoder {
 		System.out.println("Got the File");
 		BitSet bitSet = new BitSet();
 		bitSet=BitSet.valueOf(fileData);
+		System.out.println(bitSet.length());
 		StringBuilder binaryString =new StringBuilder();
 		
-		for(int i = 0; i <= bitSet.length(); i++) {
+		for(int i = 0; i <= fileData.length * 8; i++) {
 		    if(bitSet.get(i)) {
 		    	binaryString.append("1");
 		        //binaryString += "1";

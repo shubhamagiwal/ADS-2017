@@ -323,16 +323,16 @@ public class HuffmanCodingWithFourWayHeap {
 					fileContentarr.add(value);
 				}
 				long startTime = System.nanoTime();
-				for(i=0;i<10;i++){
-					HuffmanCodingWithFourWayHeap hcbh1=new HuffmanCodingWithFourWayHeap();
-					hcbh1.buildHuffmanTrees(arr);
-				}
+//				for(i=0;i<10;i++){
+//					HuffmanCodingWithFourWayHeap hcbh1=new HuffmanCodingWithFourWayHeap();
+//					hcbh1.buildHuffmanTrees(arr);
+//				}
 				long stopTime = System.nanoTime();
 				System.out.println((stopTime - startTime)/ 1000000000.0);
-				//hcbh.buildHuffmanTrees(arr);
-				//String encodedInput=hcbh.encodedOutput(fileContentarr);
-				//hcbh.createEncodedFile(encodedInput);
-				//hcbh.createCodeTableFile("code_table.txt");
+				hcbh.buildHuffmanTrees(arr);
+				String encodedInput=hcbh.encodedOutput(fileContentarr);
+				hcbh.createEncodedFile(encodedInput);
+				hcbh.createCodeTableFile("code_table.txt");
 				
 			}catch (IOException e) {
 					e.printStackTrace();
