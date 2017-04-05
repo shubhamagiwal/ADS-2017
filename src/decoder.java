@@ -31,10 +31,10 @@ public class decoder {
 		
 	}
 	
-	public String getEncodedString(String encoded_file_name){
+	public void decodeEncodedFile(String encoded_file_name) throws IOException{
 		System.out.println("Entered");
 		File file = new File(encoded_file_name);
-		System.out.println(file.length());
+		System.out.println("File length"+file.length());
 		byte[] fileData = new byte[(int) file.length()];
 		FileInputStream in;
 		try {
@@ -54,20 +54,65 @@ public class decoder {
 		BitSet bitSet = new BitSet();
 		bitSet=BitSet.valueOf(fileData);
 		System.out.println(bitSet.length());
-		StringBuilder binaryString =new StringBuilder();
-		
+		//StringBuilder binaryString =new StringBuilder();
+		TreeNode traversalPointer=root;
+		FileWriter fw=null;
+		BufferedWriter bw=null;
+		fw = new FileWriter("decoded.txt");
+		bw = new BufferedWriter(fw);
+		System.out.println("File data length ="+fileData.length);
+		int dataFirst=0;
 		for(int i = 0; i <= fileData.length * 8; i++) {
 		    if(bitSet.get(i)) {
-		    	binaryString.append("1");
-		        //binaryString += "1";
-		    } else {
-		    	binaryString.append("0");
-		    	//binaryString += "0";
+		    	traversalPointer=traversalPointer.right;
+				if(traversalPointer.left==null && traversalPointer.right==null){
+					if(dataFirst!=0){
+						bw.write("\n");
+					}
+					int data=traversalPointer.data;
+					bw.write(Integer.toString(data));
+					traversalPointer=root;
+					dataFirst++;
 		    }
-		}
-		System.out.println("Finished");
-		return binaryString.toString();
+		    	
+		    }else {
+		    	traversalPointer=traversalPointer.left;
+				if(traversalPointer.left==null && traversalPointer.right==null){
+					if(dataFirst!=0){
+						bw.write("\n");
+					}
+					int data=traversalPointer.data;
+					bw.write(Integer.toString(data));
+					traversalPointer=root;
+					dataFirst++;
+		         } 
+		   
+		 }
+		 
+		 if(i==fileData.length*8){
+			 System.out.println(i+" "+ fileData.length * 8);	
+			 if(bw!=null){
+					try {
+						bw.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				if(fw!=null){
+				  try {
+					fw.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			  }
+		 }
+		    
+//		System.out.println("Finished");
+//		return binaryString.toString();
 	}
+}
 	
 	void code_table_creation_data(String code_table_file_name){
 		String currentLine;
@@ -123,72 +168,7 @@ public class decoder {
 		}	
 	}
 	
-	void decodedFileGeneration(String encodedString){
-		int i=0;
-		
-		FileWriter fw=null;
-		BufferedWriter bw=null;
-		
-		try {
-			fw = new FileWriter("decoded.txt");
-			bw = new BufferedWriter(fw);
-			TreeNode traversalPointer=root;
-			while(i<encodedString.length()){
-				char ch=encodedString.charAt(i);
-				if(ch=='0'){
-					traversalPointer=traversalPointer.left;
-					if(traversalPointer.left==null && traversalPointer.right==null){
-						int data=traversalPointer.data;
-						bw.write(Integer.toString(data));
-						traversalPointer=root;
-						if(i<encodedString.length()-1){
-							bw.write("\n");
-						}
-					}else{
-						//traversalPointer=traversalPointer.left;
-					}
-				}else if(ch=='1'){
-					traversalPointer=traversalPointer.right;
-					if(traversalPointer.left==null && traversalPointer.right==null){
-						int data=traversalPointer.data;
-						bw.write(Integer.toString(data));
-						traversalPointer=root;
-						if(i<encodedString.length()-1){
-							bw.write("\n");
-						}
-					}else{
-						//traversalPointer=traversalPointer.right;
-					}
-				}	
-				i++;
-			}		
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally{
-			if(bw!=null){
-				try {
-					bw.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if(fw!=null){
-			  try {
-				fw.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		  }
-		}
-	}
-	
-	
-	
-
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		long endStartTime=System.nanoTime();
 		decoder hd=new decoder();
@@ -198,9 +178,8 @@ public class decoder {
 		}else{
 			String encoded_file_name=args[0];
 			String code_table_file_name=args[1];
-			String encodedString=hd.getEncodedString(encoded_file_name);
 			hd.code_table_creation_data(code_table_file_name);
-			hd.decodedFileGeneration(encodedString);
+			hd.decodeEncodedFile(encoded_file_name);
 			long endEndTime =System.nanoTime();
 			System.out.println((endEndTime-endStartTime)/ 1000000000.0);
 		}
