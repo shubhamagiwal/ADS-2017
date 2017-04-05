@@ -41,7 +41,7 @@ public class encoder {
 	    fourWayHeapWithFreq(int capacity){
 	    	this.capacity=capacity;
 	    	this.heapSize=3;
-	    	heapArr=new heapNodes[capacity];
+	    	heapArr=new heapNodes[capacity+3];
 	    	heapArr[0]=new heapNodes(new HuffmanNodes(0,-1));
 	    	heapArr[1]=new heapNodes(new HuffmanNodes(0,-1));
 	    	heapArr[2]=new heapNodes(new HuffmanNodes(0,-1));
@@ -194,15 +194,58 @@ public class encoder {
 	    }
 	    
 	    
-	    String encodedOutput(ArrayList fileContentarr){
-			
-			StringBuilder encoded = new StringBuilder();
-			System.out.println(fileContentarr.size());
-			for(int i=0;i<fileContentarr.size();i++){
-				encoded.append((String)hmap.get(fileContentarr.get(i)));
-			}
-			return encoded.toString();
+	    public void encodeInputStream (String FileName) throws NumberFormatException, IOException {
+	    	
+	    	BitSet bitSet;
+			BufferedReader br1;
+			br1 = new BufferedReader(new FileReader(FileName));
+	        String line;
+	        Integer data;
+	        int linecounter = 0;
+	        FileOutputStream out = new FileOutputStream("encoded.bin");
+		    if(out !=null)
+		        out.close();
+	        while((line = br1.readLine()) != null && !line.isEmpty()){
+	        	StringBuilder stringBuilder = new StringBuilder();
+	        	data = Integer.parseInt(line);
+	        	stringBuilder.append(hmap.get(data));
+	        	while((line = br1.readLine()) != null && !line.isEmpty() && linecounter <= 10000000){
+		        	data = Integer.parseInt(line);
+		        	stringBuilder.append(hmap.get(data));
+		        	linecounter++;
+	        	}
+	        	bitSet = getBitSet(stringBuilder.toString());
+	    	    FileOutputStream out2 = new FileOutputStream("encoded.bin",true);
+	    	    BufferedOutputStream bos = null;
+	    	    bos = new BufferedOutputStream(out2);
+	    	    byte[] totalBytes = bitSet.toByteArray();
+	    	    bos.write(totalBytes);
+	    	    bos.flush();
+	    	    
+	    	    if(bos!=null){
+					 bos.flush();
+					 bos.close(); 
+				 }
+	    	    linecounter = 0;
+	        }
+			br1.close();
 		}
+	    
+	    
+	    BitSet getBitSet(String encoded){
+	    	BitSet bitSet=new BitSet(encoded.length());
+	    	int bitcounter = 0;
+	    	for(Character c : encoded.toCharArray()) {
+			    if(c.equals('1')) {
+			        bitSet.set(bitcounter);
+			    }
+			    bitcounter++;
+			}
+	    	
+	    	return bitSet;
+	    }
+	    
+	    
 		
 		void createEncodedFile(String encoded){
 			System.out.println("Enterd the file creation stage");
@@ -218,7 +261,7 @@ public class encoder {
 			byte encodedArr[]=bitSet.toByteArray();
 
 			try {
-				FileOutputStream fos = new FileOutputStream("encoded.bin");
+				FileOutputStream fos = new FileOutputStream("encoded.bin",true);
 				BufferedOutputStream bos = null;
 				bos = new BufferedOutputStream(fos);
 				try {
@@ -246,7 +289,6 @@ public class encoder {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
 		
 		}
 		
@@ -324,8 +366,10 @@ public class encoder {
 				hcbh.buildHuffmanTrees(arr);
 				long stopTime = System.nanoTime();
 				System.out.println((stopTime - startTime)/ 1000000000.0);
-				String encodedInput=hcbh.encodedOutput(fileContentarr);
-				hcbh.createEncodedFile(encodedInput);
+				//hcbh.encodedOutput(fileContentarr);
+				//String encodedInput=hcbh.encodedOutput(fileContentarr);
+				//hcbh.createEncodedFile(encodedInput);
+				hcbh.encodeInputStream(args[0]);
 				hcbh.createCodeTableFile("code_table.txt");
 				long endEndTime =System.nanoTime();
 				System.out.println((endEndTime-endStartTime)/ 1000000000.0);
